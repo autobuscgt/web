@@ -1,7 +1,7 @@
 const { User } = require('../models/models') 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const SECRET_FOR_JWT = 'ioqifasoifjassojifjiasof'
+const SECRET_FOR_JWT = process.env.SECRET_KEY
 
 exports.login = async (req, res) => {
     try {
