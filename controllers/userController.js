@@ -3,6 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const SECRET_FOR_JWT = process.env.SECRET_KEY
 
+const generateJWT = ({login, role}) => {
+    return jwt.sign({login,role}, SECRET_FOR_JWT, {expiresIn:'24h'})
+}
+
 exports.login = async (req, res) => {
     try {
         const { login, password } = req.body;
@@ -14,7 +18,7 @@ exports.login = async (req, res) => {
         if (!match) {
             return res.status(401).json({ message: 'Not authorization' })
         };
-        const token = jwt.sign({ login: candidate.login, role: candidate.role }, SECRET_FOR_JWT, { expiresIn: '24h' })
+        const token = generateJWT(candidate.login, candidate.role);
         return res.status(201).json({ message: 'User authorization', token: token });
     } catch (error) {
         console.log(error)
@@ -33,7 +37,7 @@ exports.register = async (req, res) => {
         };
         const hashPassword = await bcrypt.hash(password, 7);
         const new_user = await User.create({ login, password: hashPassword, role, email })
-        const token = jwt.sign({ login: new_user.login, role: new_user.role }, SECRET_FOR_JWT, { expiresIn: '24h' })
+        const token = generateJWT(new_user.login, new_user.role);
         return res.status(201).json({ message: 'User registered', token: token });
     } catch (error) {
         console.log(error);
