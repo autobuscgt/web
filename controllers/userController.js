@@ -18,7 +18,7 @@ exports.login = async (req, res) => {
         if (!match) {
             return res.status(401).json({ message: 'Not authorization' })
         };
-        const token = generateJWT(candidate.login, candidate.role);
+        const token = generateJWT({login:candidate.login, role: candidate.role});
         return res.status(201).json({ message: 'User authorization', token: token });
     } catch (error) {
         console.log(error)
@@ -37,7 +37,7 @@ exports.register = async (req, res) => {
         };
         const hashPassword = await bcrypt.hash(password, 7);
         const new_user = await User.create({ login, password: hashPassword, role, email })
-        const token = generateJWT(new_user.login, new_user.role);
+        const token = generateJWT({login: new_user.login, role: new_user.role});
         return res.status(201).json({ message: 'User registered', token: token });
     } catch (error) {
         console.log(error);
